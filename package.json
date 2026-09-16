@@ -5,12 +5,15 @@
   "scripts": {
     "dev": "npm --prefix src/frontend run dev",
     "build": "npm --prefix src/frontend run build",
-    "start": "npm --prefix src/frontend start"
+    "start": "npm --prefix src/frontend start",
+    "postinstall": "npm --prefix src/frontend install --include=dev"
   },
   "dependencies": {
     "next": "16.1.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4"
   },
   "devDependencies": {
     "@types/node": "^20",
