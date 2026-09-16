@@ -149,6 +149,13 @@ export default function Home() {
     );
   };
 
+  const handleDirectAnalyze = () => {
+    handleSendMessage(
+      "Please analyze my skin tone, undertone, and body silhouette from my uploaded photo, and recommend my most flattering color palette and tailoring rules.",
+      []
+    );
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
@@ -188,115 +195,105 @@ export default function Home() {
               title="View Multi-Agent Architecture"
             >
               <span>🕸️</span>
-              <span className="hidden sm:inline">Agent Network</span>
+              <span className="hidden md:inline">Agent Architecture</span>
+            </button>
+
+            {/* Model Photo Button */}
+            <button
+              onClick={() => setIsPhotoModalOpen(true)}
+              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all border shadow-sm ${
+                modelImagePreview
+                  ? "bg-[#d4af37]/20 border-[#d4af37] text-[#fcebc2]"
+                  : "glass-panel hover:bg-white/10 border-white/10 text-gray-300"
+              }`}
+            >
+              <span>👤</span>
+              <span className="hidden sm:inline">
+                {modelImagePreview ? "Active Fitting Model ✓" : "Set My Photo"}
+              </span>
             </button>
 
             {/* Wardrobe Drawer Button */}
             <button
               onClick={() => setIsWardrobeDrawerOpen(true)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold glass-panel hover:bg-white/10 border-white/10 text-gray-200 hover:text-white transition-all shadow-sm"
-              title="Browse Qdrant Wardrobe items"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold bg-gold-gradient text-black hover:opacity-90 transition-all shadow-md font-medium"
             >
-              <span>🧥</span>
-              <span className="hidden sm:inline">My Closet</span>
+              <span>👗</span>
+              <span>Wardrobe Closet</span>
             </button>
 
-            {/* Virtual Try-On Model Button */}
-            <button
-              onClick={() => setIsPhotoModalOpen(true)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold glass-panel hover:bg-white/10 border-white/10 text-gray-200 hover:text-white transition-all shadow-sm relative"
-              title="Set user model photo for virtual try-on"
-            >
-              {modelImagePreview ? (
-                <>
-                  <img
-                    src={modelImagePreview}
-                    alt="Active model"
-                    className="h-5 w-5 rounded-full object-cover border border-[#d4af37]"
-                  />
-                  <span className="text-[#fcebc2] hidden sm:inline">Fitting Ready</span>
-                </>
-              ) : (
-                <>
-                  <span>✨</span>
-                  <span className="hidden sm:inline">Virtual Fitting</span>
-                </>
-              )}
-            </button>
-
-            {/* New Consultation */}
+            {/* New Session Button */}
             <button
               onClick={handleNewChat}
-              className="px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white transition-all"
+              className="p-2 rounded-xl glass-panel hover:bg-white/10 border-white/10 text-gray-400 hover:text-white transition-all text-xs"
+              title="New Styling Session"
             >
-              ↻ <span className="hidden sm:inline">New Session</span>
+              ↺
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main Chat Area */}
-      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 sm:py-8">
-        {messages.length === 0 ? (
-          /* Empty State Hero */
-          <div className="flex min-h-[75vh] flex-col items-center justify-center text-center max-w-3xl mx-auto px-4">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-medium bg-[#d4af37]/10 text-[#fcebc2] border border-[#d4af37]/30 mb-6 animate-in fade-in duration-500">
-              <span>✦</span> Autumn / Winter 2026 Ready <span>✦</span>
+      {/* Main Experience Body */}
+      <main className="flex-1 overflow-y-auto px-4 sm:px-8 py-6">
+        {isLoadingHistory ? (
+          <div className="flex h-full items-center justify-center">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#d4af37] border-t-transparent" />
+              <p className="text-xs text-gray-400 font-serif tracking-widest uppercase">
+                Restoring Styling Suite...
+              </p>
+            </div>
+          </div>
+        ) : messages.length === 0 ? (
+          /* Editorial Hero Welcome Canvas */
+          <div className="flex h-full flex-col items-center justify-center text-center max-w-2xl mx-auto px-4">
+            <div className="relative mb-6">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#8c6d17] via-[#d4af37] to-[#fcebc2] p-[1px] shadow-2xl shadow-[#d4af37]/20">
+                <div className="w-full h-full bg-[#090b12] rounded-2xl flex items-center justify-center font-serif text-3xl font-black text-[#d4af37]">
+                  V
+                </div>
+              </div>
+              <span className="absolute -top-1 -right-1 flex h-4 w-4">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4af37] opacity-75" />
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-[#d4af37]" />
+              </span>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-serif font-bold text-white tracking-tight mb-4 leading-tight">
-              Bespoke Styling, <br />
-              <span className="text-gold-gradient">Powered by Wardrobe Intelligence</span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-medium tracking-wide text-white mb-2">
+              Your Personal Haute Couture Stylist
             </h2>
-
-            <p className="text-sm sm:text-base text-gray-400 max-w-xl mb-10 leading-relaxed">
-              Experience conversational fashion consulting with vector-indexed wardrobe retrieval, silhouette matching, and virtual try-on simulation.
+            <p className="text-xs sm:text-sm text-gray-400 max-w-lg leading-relaxed mb-6 font-light">
+              Autonomous multi-agent intelligence analyzing skin tone, undertones, and silhouettes, retrieving pieces from your local vector closet, and styling buyable looks on Amazon, Flipkart, and Meesho.
             </p>
 
-            {/* 3 Feature Pillars */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mb-8">
+            {/* Quick-action visual cues */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg mb-8 text-left">
               <div
                 onClick={() => setIsWardrobeDrawerOpen(true)}
-                className="glass-card rounded-2xl p-5 text-left cursor-pointer group"
+                className="p-3.5 rounded-xl glass-panel border border-white/10 hover:border-[#d4af37]/40 cursor-pointer transition-all group"
               >
-                <div className="text-2xl mb-2">🧥</div>
-                <h3 className="text-sm font-semibold text-white group-hover:text-[#d4af37] transition-colors">
-                  Vector Closet
-                </h3>
-                <p className="text-xs text-gray-400 mt-1">
-                  23 curated wardrobe items indexed in Qdrant with Fashion-CLIP embeddings.
-                </p>
-              </div>
-
-              <div
-                onClick={() =>
-                  handleSendMessage(
-                    "Recommend me a sharp evening outfit pairing a coat with matching shoes from my closet.",
-                    []
-                  )
-                }
-                className="glass-card rounded-2xl p-5 text-left cursor-pointer group"
-              >
-                <div className="text-2xl mb-2">✨</div>
-                <h3 className="text-sm font-semibold text-white group-hover:text-[#d4af37] transition-colors">
-                  Occasion Styling
-                </h3>
-                <p className="text-xs text-gray-400 mt-1">
-                  Ask for cocktail, boardroom, streetwear, or black-tie outfit recipes.
-                </p>
+                <div className="text-lg mb-1 group-hover:scale-110 transition-transform">🧥</div>
+                <div className="text-xs font-semibold text-white mb-0.5">Vector Closet</div>
+                <div className="text-[10px] text-gray-400">23 Fashion-CLIP embedded pieces</div>
               </div>
 
               <div
                 onClick={() => setIsPhotoModalOpen(true)}
-                className="glass-card rounded-2xl p-5 text-left cursor-pointer group"
+                className="p-3.5 rounded-xl glass-panel border border-white/10 hover:border-[#d4af37]/40 cursor-pointer transition-all group"
               >
-                <div className="text-2xl mb-2">📸</div>
-                <h3 className="text-sm font-semibold text-white group-hover:text-[#d4af37] transition-colors">
-                  Virtual Fitting
-                </h3>
-                <p className="text-xs text-gray-400 mt-1">
-                  Upload your photo to test generative garment simulation and try-on looks.
-                </p>
+                <div className="text-lg mb-1 group-hover:scale-110 transition-transform">✨</div>
+                <div className="text-xs font-semibold text-white mb-0.5">Visage & Tone</div>
+                <div className="text-[10px] text-gray-400">Flattering palette & silhouette</div>
+              </div>
+
+              <div
+                onClick={() => handleSendMessage("Find me an emerald green party outfit on Amazon or Meesho suitable for my undertone.", [])}
+                className="p-3.5 rounded-xl glass-panel border border-white/10 hover:border-[#d4af37]/40 cursor-pointer transition-all group"
+              >
+                <div className="text-lg mb-1 group-hover:scale-110 transition-transform">🛍️</div>
+                <div className="text-xs font-semibold text-white mb-0.5">Online Finds</div>
+                <div className="text-[10px] text-gray-400">Amazon · Flipkart · Meesho</div>
               </div>
             </div>
           </div>
@@ -342,6 +339,7 @@ export default function Home() {
         onClose={() => setIsPhotoModalOpen(false)}
         previewUrl={modelImagePreview}
         onSetFile={handleSetModelImage}
+        onAnalyze={handleDirectAnalyze}
       />
 
       <WardrobeDrawer

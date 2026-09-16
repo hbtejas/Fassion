@@ -7,6 +7,7 @@ interface ModelPhotoModalProps {
   onClose: () => void;
   previewUrl: string | null;
   onSetFile: (file: File | null) => void;
+  onAnalyze?: () => void;
 }
 
 export default function ModelPhotoModal({
@@ -14,6 +15,7 @@ export default function ModelPhotoModal({
   onClose,
   previewUrl,
   onSetFile,
+  onAnalyze,
 }: ModelPhotoModalProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -69,11 +71,22 @@ export default function ModelPhotoModal({
               </span>
             </div>
 
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                if (onAnalyze) onAnalyze();
+              }}
+              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#d4af37] to-[#c5a059] hover:from-[#e5c068] hover:to-[#d4af37] text-black font-semibold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>✨ Analyze Complexion & Silhouette Now</span>
+            </button>
+
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-sm font-medium transition-colors"
+                className="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors"
               >
                 Change Photo
               </button>
@@ -82,7 +95,7 @@ export default function ModelPhotoModal({
                 onClick={() => {
                   onSetFile(null);
                 }}
-                className="py-2.5 px-4 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-sm font-medium transition-colors"
+                className="py-2 px-4 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-medium transition-colors"
               >
                 Remove
               </button>
