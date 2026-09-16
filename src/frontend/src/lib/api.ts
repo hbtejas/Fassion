@@ -1,6 +1,6 @@
 import { ChatRequest, ChatResponse, SessionDataResponse } from "@/types";
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export async function fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
