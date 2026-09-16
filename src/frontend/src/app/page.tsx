@@ -152,7 +152,7 @@ export default function Home() {
   const handleDirectAnalyze = () => {
     handleSendMessage(
       "Please analyze my skin tone, undertone, and body silhouette from my uploaded photo, and recommend my most flattering color palette and tailoring rules.",
-      []
+      modelImage ? [modelImage] : []
     );
   };
 

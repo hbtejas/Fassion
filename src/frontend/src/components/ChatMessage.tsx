@@ -138,7 +138,7 @@ export default function ChatMessage({ message }: ChatMessageProps) {
               {message.images && message.images.length > 0 && (
                 <div className="mt-4 pt-3 border-t border-white/10">
                   <span className="text-[11px] font-semibold text-[#d4af37] uppercase tracking-wider block mb-2">
-                    Retrieved Wardrobe Pieces ({message.images.length})
+                    {isUser ? `Attached Portrait / Reference (${message.images.length})` : `Retrieved Wardrobe Pieces (${message.images.length})`}
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
                     {message.images.map((img) => (
