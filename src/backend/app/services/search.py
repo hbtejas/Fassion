@@ -45,3 +45,52 @@ def search_item(items: list[str], max_results: int = 5) -> str:
     for item in items:
         search_results[item] = DDGS().text(item, max_results=max_results, timelimit="m", backend="google")
     return parse_search_results(search_results)
+
+
+def search_ecommerce_products(
+    items: list[str],
+    platforms: list[str] = ["amazon", "flipkart", "meesho"],
+    max_results: int = 3,
+) -> str:
+    """Search for real fashion products on e-commerce platforms like Amazon, Flipkart, and Meesho.
+
+    Args:
+        items: List of fashion item descriptions or keywords to search for.
+        platforms: List of platforms to target ("amazon", "flipkart", "meesho").
+        max_results: Maximum results to return per item.
+
+    Returns:
+        Formatted string containing product title, direct purchase link, platform name, and details.
+    """
+    site_query = " OR ".join([f"site:{p}.in OR site:{p}.com" for p in platforms])
+
+    output_lines = []
+    for item in items:
+        query = f"({site_query}) {item}"
+        try:
+            results = list(DDGS().text(query, max_results=max_results))
+            output_lines.append(f"Products for '{item}':")
+            for i, r in enumerate(results):
+                title = r.get("title", "").strip()
+                link = r.get("href", "").strip()
+                body = r.get("body", "").strip()
+                
+                # Determine platform
+                lower_link = link.lower()
+                if "amazon" in lower_link:
+                    platform = "Amazon"
+                elif "flipkart" in lower_link:
+                    platform = "Flipkart"
+                elif "meesho" in lower_link:
+                    platform = "Meesho"
+                else:
+                    platform = "Store"
+
+                output_lines.append(f"  [{platform}] {title}")
+                output_lines.append(f"    Link: {link}")
+                if body:
+                    output_lines.append(f"    Info: {body[:140]}...")
+        except Exception as e:
+            output_lines.append(f"  Could not retrieve products for {item}: {e}")
+
+    return "\n".join(output_lines)

@@ -37,7 +37,8 @@ def descriptor_agent(image_list: dict[str, str]):
         prompt.append(image_id)
         prompt.append(process_images(image_info.path))
 
-    client = instructor.from_litellm(completion)
+    mode = instructor.Mode.MD_JSON if "gemini" in settings.llm_model else instructor.Mode.TOOLS
+    client = instructor.from_litellm(completion, mode=mode)
 
     response, raw_response = client.chat.completions.create_with_completion(
         model=settings.llm_model,
@@ -51,11 +52,11 @@ def descriptor_agent(image_list: dict[str, str]):
 
     current_run = get_current_run_tree()
 
-    if current_run:
+    if current_run and hasattr(raw_response, "usage") and raw_response.usage:
         current_run.metadata["usage_metadata"] = {
-            "input_tokens": raw_response.usage.prompt_tokens,
-            "output_tokens": raw_response.usage.completion_tokens,
-            "total_tokens": raw_response.usage.total_tokens
+            "input_tokens": getattr(raw_response.usage, "prompt_tokens", 0),
+            "output_tokens": getattr(raw_response.usage, "completion_tokens", 0),
+            "total_tokens": getattr(raw_response.usage, "total_tokens", 0)
         }
 
     return response.item_descriptions

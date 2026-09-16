@@ -17,9 +17,16 @@ openai_api_key.txt
 
 notebooks/
 qdrant_storage/
+qdrant/
+scratch/
 scraper/
 examples/
 
 # data
 data/ctl
 data/uniqlo_scraper
+
+# Frontend build & dependencies
+node_modules/
+.next/
+.turbo/

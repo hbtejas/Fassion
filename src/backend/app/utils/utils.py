@@ -48,6 +48,7 @@ def parse_function_definition(function_def: str) -> Dict[str, Any]:
 
     # Extract docstring
     docstring = ast.get_docstring(func) or ""
+    param_descs = {}
     if docstring:
         # Extract description (first line / paragraph)
         desc_end = docstring.find('\n\n') if '\n\n' in docstring else docstring.find('\nArgs:')

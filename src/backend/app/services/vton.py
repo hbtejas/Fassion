@@ -39,8 +39,19 @@ def virtual_try_on_agent(model_image: Image.Image, item_images: list[Image.Image
             "total_tokens": response.usage_metadata.total_token_count
         }
 
-    image_parts = response.parts[0].as_image()
-    image_bytes, mime_type = image_parts.image_bytes, image_parts.mime_type
+    image_bytes = None
+    mime_type = "image/png"
+    try:
+        image_parts = response.parts[0].as_image()
+        image_bytes, mime_type = image_parts.image_bytes, image_parts.mime_type
+    except Exception:
+        if hasattr(response, "candidates") and response.candidates:
+            for part in response.candidates[0].content.parts:
+                if hasattr(part, "inline_data") and part.inline_data:
+                    image_bytes, mime_type = part.inline_data.data, part.inline_data.mime_type
+                    break
+        if not image_bytes:
+            raise ValueError("Virtual Try-on did not return an image.")
 
     return image_bytes, mime_type
 

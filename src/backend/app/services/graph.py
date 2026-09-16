@@ -6,8 +6,9 @@ from src.backend.app.dependencies import deps
 from src.backend.app.services.descriptor import create_get_item_descriptions
 from src.backend.app.services.recommender import get_recommendations
 from src.backend.app.services.retrieval import create_retrieve_item_from_wardrobe
-from src.backend.app.services.search import search_item
+from src.backend.app.services.search import search_item, search_ecommerce_products
 from src.backend.app.services.vton import create_virtual_try_on_image
+from src.backend.app.services.profile_analyzer import create_analyze_user_appearance
 from src.backend.app.utils.utils import get_tool_descriptions, add_image_ids_to_message, load_message_history_for_llm
 from src.backend.app.services.agent import agent_node
 from src.backend.app.models.schemas import ChatRequest, ChatResponse, ImageResult, ImageSource
@@ -42,6 +43,8 @@ def get_graph(
         create_retrieve_item_from_wardrobe(session_id, model, processor, q_client),
         search_item,
         create_virtual_try_on_image(session_id),
+        create_analyze_user_appearance(session_id),
+        search_ecommerce_products,
     ]
     tool_node = ToolNode(descriptor_tool)
     tool_descriptions = get_tool_descriptions(descriptor_tool)
@@ -126,6 +129,10 @@ def invoke_graph(
             type=ai_result_image.type,
         ))
 
+    session_obj = deps.session_manager.get_session(session_id)
+    analysis = result.get("analysis") or getattr(session_obj, "latest_analysis", None)
+    products = result.get("products") or getattr(session_obj, "latest_products", None)
+
     # store the original messages
     deps.session_manager.store_message(
         session_id,
@@ -133,10 +140,14 @@ def invoke_graph(
         ai_response=result.get("answer", ""),
         user_images=user_provided_images if user_provided_images else None,
         ai_images=ai_images if ai_images else None,
+        analysis=analysis,
+        products=products if products else None,
     )
 
     return ChatResponse(
         session_id=session_id,
         answer=result.get("answer", ""),
         images=ai_images if ai_images else None,
+        analysis=analysis,
+        products=products if products else None,
     )

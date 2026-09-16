@@ -47,4 +47,21 @@ export async function getSession(sessionId: string): Promise<SessionDataResponse
     }
 
     return response.json();
-}   
+}
+
+export async function getWardrobe(): Promise<{ items: import("@/types").WardrobeItem[]; total: number }> {
+    try {
+        const response = await fetch(`${API_BASE_URL}/wardrobe`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            return { items: [], total: 0 };
+        }
+        return response.json();
+    } catch {
+        return { items: [], total: 0 };
+    }
+}

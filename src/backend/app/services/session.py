@@ -21,6 +21,9 @@ class SessionManager:
             self._sessions[session_id] = Session(image_source_store={}, message_history=[])
             return session_id
 
+    def get_session(self, session_id: str) -> Session:
+        return self._sessions[session_id]
+
     def get_model_source(self, session_id) -> ImageSource:
         model_image_id = self._sessions[session_id].model_image_id
         return self._sessions[session_id].image_source_store.get(model_image_id)
@@ -46,9 +49,11 @@ class SessionManager:
         ai_response: str,
         user_images: Optional[List[ImageResult]] = None,
         ai_images: Optional[List[ImageResult]] = None,
+        analysis: Optional[Any] = None,
+        products: Optional[List[Any]] = None,
     ) -> None:
         user_message = MessageHistory(role="user", content=user_query, images=user_images)
-        ai_message = MessageHistory(role="assistant", content=ai_response, images=ai_images)
+        ai_message = MessageHistory(role="assistant", content=ai_response, images=ai_images, analysis=analysis, products=products)
         self._sessions[session_id].message_history.append(user_message)
         self._sessions[session_id].message_history.append(ai_message)
 

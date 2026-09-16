@@ -18,8 +18,9 @@ from src.backend.app.dependencies import deps
 )
 def get_text_features(model: CLIPModel, processor: CLIPProcessor, text_query: list[str]):
     text_inputs = processor.tokenizer(text=text_query, return_tensors="pt", padding=True)
-    input_ids = text_inputs["input_ids"].cuda()
-    attention_mask = text_inputs["attention_mask"].cuda()
+    device = next(model.parameters()).device
+    input_ids = text_inputs["input_ids"].to(device)
+    attention_mask = text_inputs["attention_mask"].to(device)
     with torch.no_grad():
         text_features = model.get_text_features(input_ids, attention_mask)
     return text_features.cpu().numpy().tolist()
