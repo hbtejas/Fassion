@@ -55,8 +55,8 @@ class PromptManager:
 
         try:
             return prompt.messages[0].prompt.template
-        except Exception as e:
-            raise ValueError(f"Failed to get prompt for {agent}: {e}")
+        except Exception:
+            return self._load_local_prompt(agent)
 
     def refresh(self, name: str = None) -> None:
         if name:
