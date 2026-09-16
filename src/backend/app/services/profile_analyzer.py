@@ -24,11 +24,15 @@ Carefully inspect this portrait or full-body photo of the user:
 
 Respond strictly adhering to the requested schema."""
 
+    # Optimize image resolution for fast multimodal inference
+    img_copy = image.copy()
+    img_copy.thumbnail((1024, 1024))
+
     g_client = genai.Client()
     # Use Gemini multimodal structured generation
     response = g_client.models.generate_content(
         model="gemini-3.1-flash-lite",
-        contents=[image, prompt],
+        contents=[img_copy, prompt],
         config={
             "response_mime_type": "application/json",
             "response_schema": SkinToneBodyAnalysis,

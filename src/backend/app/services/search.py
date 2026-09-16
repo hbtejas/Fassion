@@ -62,19 +62,35 @@ def search_ecommerce_products(
     Returns:
         Formatted string containing product title, direct purchase link, platform name, and details.
     """
+    import re
     site_query = " OR ".join([f"site:{p}.in OR site:{p}.com" for p in platforms])
 
     output_lines = []
+    price_regex = re.compile(r"(?:₹|Rs\.?|INR|\$)\s*[\d,]+(?:\.\d+)?")
+
     for item in items:
-        query = f"({site_query}) {item}"
+        query = f"buy {item} ({site_query})"
         try:
-            results = list(DDGS().text(query, max_results=max_results))
+            results = list(DDGS().text(query, max_results=max_results + 2))
             output_lines.append(f"Products for '{item}':")
-            for i, r in enumerate(results):
+            count = 0
+            for r in results:
+                if count >= max_results:
+                    break
                 title = r.get("title", "").strip()
                 link = r.get("href", "").strip()
                 body = r.get("body", "").strip()
-                
+
+                # Clean noisy marketing prefixes/suffixes
+                title_clean = re.sub(r"(?i)^(buy\s+|amazon\.in:\s*|flipkart\.com:\s*|meesho:\s*)", "", title)
+                title_clean = re.sub(r"(?i)\s*[-|:]\s*(amazon|flipkart|meesho).*$", "", title_clean).strip()
+                if not title_clean:
+                    title_clean = title
+
+                # Extract price if present
+                price_match = price_regex.search(f"{title} {body}")
+                price_str = f" [Price: {price_match.group(0).strip()}]" if price_match else ""
+
                 # Determine platform
                 lower_link = link.lower()
                 if "amazon" in lower_link:
@@ -86,11 +102,14 @@ def search_ecommerce_products(
                 else:
                     platform = "Store"
 
-                output_lines.append(f"  [{platform}] {title}")
+                output_lines.append(f"  [{platform}] {title_clean}{price_str}")
                 output_lines.append(f"    Link: {link}")
                 if body:
-                    output_lines.append(f"    Info: {body[:140]}...")
+                    clean_body = re.sub(r"\s+", " ", body).strip()
+                    output_lines.append(f"    Info: {clean_body[:130]}...")
+                count += 1
         except Exception as e:
             output_lines.append(f"  Could not retrieve products for {item}: {e}")
 
     return "\n".join(output_lines)
+
